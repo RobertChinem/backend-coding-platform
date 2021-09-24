@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ProblemsModule } from './problems/problems.module';
 import { CodesModule } from './codes/codes.module';
+import { SolutionsModule } from './solutions/solutions.module';
 require('dotenv/config');
 
 @Module({
@@ -11,6 +12,7 @@ require('dotenv/config');
     ),
     ProblemsModule,
     CodesModule,
+    SolutionsModule,
   ],
   controllers: [],
   providers: [],
