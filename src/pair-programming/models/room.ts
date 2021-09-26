@@ -6,6 +6,7 @@ export interface Environment {
   language: string;
   sourceCode: string;
   stdin: string;
+  timestamp: number;
 }
 
 interface Message {
@@ -26,6 +27,7 @@ export class Room {
       language: '',
       sourceCode: '',
       stdin: '',
+      timestamp: 0,
     };
     this.messages = [];
   }
