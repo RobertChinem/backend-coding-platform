@@ -3,6 +3,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ProblemsModule } from './problems/problems.module';
 import { CodesModule } from './codes/codes.module';
 import { SolutionsModule } from './solutions/solutions.module';
+import { ChatGateway } from './chat.gateway';
 require('dotenv/config');
 
 @Module({
@@ -15,6 +16,6 @@ require('dotenv/config');
     SolutionsModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [ChatGateway],
 })
 export class AppModule {}

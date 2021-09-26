@@ -26,13 +26,17 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/mongoose": "^8.0.1",
     "@nestjs/platform-express": "^7.6.15",
+    "@nestjs/platform-socket.io": "^8.0.7",
+    "@nestjs/websockets": "^8.0.7",
+    "@types/uuid": "^8.3.1",
     "axios": "^0.21.4",
     "dotenv": "^10.0.0",
     "google-auth-library": "^7.9.2",
     "mongoose": "^6.0.7",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^6.6.6"
+    "rxjs": "^6.6.6",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.6.0",
