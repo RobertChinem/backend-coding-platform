@@ -3,16 +3,35 @@ import { Document } from 'mongoose';
 
 export type SolutionDocument = Solution & Document;
 
+class TestCase {
+  input: string;
+  veredict: string;
+  expectedOutput: string;
+  compile_output: string | null;
+  stdout: string | null;
+  stderr: string | null;
+}
+
+class JudgeResult {
+  veredict: string;
+  testCases: TestCase[];
+}
+
 @Schema()
 export class Solution {
   @Prop()
-  language_id: number;
+  sourceCode: string;
 
   @Prop()
-  source_code: string;
+  languageID: number;
 
   @Prop()
-  problem_id: string;
+  problemID: string;
+
+  @Prop()
+  judgeResult: JudgeResult;
 }
 
-export const SolutionSchema = SchemaFactory.createForClass(Solution);
+const SolutionSchema = SchemaFactory.createForClass(Solution);
+
+export { SolutionSchema };

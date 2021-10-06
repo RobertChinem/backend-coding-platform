@@ -1,3 +1,4 @@
+import { Judge0 } from './../entities/judge0';
 import { Solution, SolutionDocument } from './entities/solution.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -5,7 +6,6 @@ import { Model } from 'mongoose';
 import { Problem, ProblemDocument } from 'src/problems/entities/problem.entity';
 import { CreateSolutionDto } from './dto/create-solution.dto';
 import { UpdateSolutionDto } from './dto/update-solution.dto';
-import axios from 'axios';
 
 @Injectable()
 export class SolutionsService {
@@ -19,41 +19,37 @@ export class SolutionsService {
       .findById(createSolutionDto.problem_id)
       .exec();
     const { testCases } = problem;
-    const results = await Promise.all(
-      testCases.map(({ input, expectedOutput }) =>
-        axios
-          .post(
-            `${process.env.HOST_JUDGE0}/submissions/?base64_encoded=true&wait=true`,
-            {
-              source_code: createSolutionDto.source_code,
-              language_id: createSolutionDto.language_id,
-              stdin: Buffer.from(input, 'utf8').toString('base64'),
-            },
-          )
-          .then(
-            (r) =>
-              Buffer.from(r.data.stdout, 'base64').toString('utf8') ===
-              expectedOutput,
-          ),
-      ),
+    const judge0 = new Judge0();
+    const judgeResult = await judge0.judge(
+      {
+        sourceCode: createSolutionDto.source_code,
+        languageID: createSolutionDto.language_id,
+      },
+      testCases || [],
     );
 
-    return results.every((f) => f);
+    const solution = new this.solutionModel({
+      sourceCode: createSolutionDto.source_code,
+      languageID: createSolutionDto.language_id,
+      problemID: createSolutionDto.problem_id,
+      judgeResult: judgeResult,
+    });
+    return solution.save();
   }
 
   findAll() {
-    return `This action returns all solutions`;
+    return this.solutionModel.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} solution`;
+  findOne(id: string) {
+    return this.solutionModel.findById(id);
   }
 
-  update(id: number, updateSolutionDto: UpdateSolutionDto) {
-    return `This action updates a #${id} solution`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} solution`;
+  remove(id: string) {
+    return this.solutionModel
+      .deleteOne({
+        _id: id,
+      })
+      .exec();
   }
 }

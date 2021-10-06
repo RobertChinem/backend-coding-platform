@@ -1,7 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { SolutionsService } from './solutions.service';
 import { CreateSolutionDto } from './dto/create-solution.dto';
-import { UpdateSolutionDto } from './dto/update-solution.dto';
 
 @Controller('solutions')
 export class SolutionsController {
@@ -19,16 +18,11 @@ export class SolutionsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.solutionsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSolutionDto: UpdateSolutionDto) {
-    return this.solutionsService.update(+id, updateSolutionDto);
+    return this.solutionsService.findOne(id);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.solutionsService.remove(+id);
+    return this.solutionsService.remove(id);
   }
 }
