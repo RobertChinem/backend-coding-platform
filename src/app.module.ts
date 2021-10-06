@@ -5,6 +5,7 @@ import { CodesModule } from './codes/codes.module';
 import { SolutionsModule } from './solutions/solutions.module';
 import { ChatGateway } from './chat.gateway';
 import { BlogPostsModule } from './blog-posts/blog-posts.module';
+import { UsersModule } from './users/users.module';
 require('dotenv/config');
 
 @Module({
@@ -16,6 +17,7 @@ require('dotenv/config');
     CodesModule,
     SolutionsModule,
     BlogPostsModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [ChatGateway],
