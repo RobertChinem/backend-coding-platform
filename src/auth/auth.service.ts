@@ -21,16 +21,16 @@ export class AuthService {
       };
     }
 
-    const authData = await provider.validateToken(authDto.token);
+    const { email, valid } = await provider.validateToken(authDto.token);
 
-    if (!authData.valid) {
+    if (!valid) {
       return {
         status: false,
         message: 'Invalid token',
       };
     }
 
-    const user = await this.userModel.findOne({ email: authDto.email }).exec();
+    const user = await this.userModel.findOne({ email }).exec();
 
     if (!user) {
       return {
