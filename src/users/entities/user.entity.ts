@@ -13,6 +13,13 @@ export class User {
 
   @Prop()
   avatar: string;
+
+  @Prop()
+  roles: string[];
+
+  isAdmin(): boolean {
+    return this.roles.includes('admin');
+  }
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

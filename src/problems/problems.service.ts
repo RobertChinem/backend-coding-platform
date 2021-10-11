@@ -4,14 +4,27 @@ import { CreateProblemDto } from './dto/create-problem.dto';
 import { UpdateProblemDto } from './dto/update-problem.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class ProblemsService {
   constructor(
     @InjectModel(Problem.name) private problemModel: Model<ProblemDocument>,
+    private readonly usersService: UsersService,
   ) {}
 
-  create(createProblemDto: CreateProblemDto) {
+  async create(
+    createProblemDto: CreateProblemDto,
+    token: string,
+    provider: string,
+  ) {
+    const user = await this.usersService.findUserByToken({ token, provider });
+    if (!user) {
+      return {
+        status: false,
+        message: 'Invalid credentials',
+      };
+    }
     const problem = new this.problemModel(createProblemDto);
     return problem.save();
   }
@@ -24,7 +37,19 @@ export class ProblemsService {
     return this.problemModel.findById(id);
   }
 
-  update(id: string, updateProblemDto: UpdateProblemDto) {
+  async update(
+    id: string,
+    updateProblemDto: UpdateProblemDto,
+    token: string,
+    provider: string,
+  ) {
+    const user = await this.usersService.findUserByToken({ token, provider });
+    if (!user) {
+      return {
+        status: false,
+        message: 'Invalid credentials',
+      };
+    }
     return this.problemModel.findByIdAndUpdate(
       {
         _id: id,
@@ -38,7 +63,14 @@ export class ProblemsService {
     );
   }
 
-  remove(id: string) {
+  async remove(id: string, token: string, provider: string) {
+    const user = await this.usersService.findUserByToken({ token, provider });
+    if (!user) {
+      return {
+        status: false,
+        message: 'Invalid credentials',
+      };
+    }
     return this.problemModel
       .deleteOne({
         _id: id,

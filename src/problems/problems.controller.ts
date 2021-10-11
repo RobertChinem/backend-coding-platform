@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Headers,
 } from '@nestjs/common';
 import { ProblemsService } from './problems.service';
 import { CreateProblemDto } from './dto/create-problem.dto';
@@ -16,8 +17,12 @@ export class ProblemsController {
   constructor(private readonly problemsService: ProblemsService) {}
 
   @Post()
-  create(@Body() createProblemDto: CreateProblemDto) {
-    return this.problemsService.create(createProblemDto);
+  async create(
+    @Body() createProblemDto: CreateProblemDto,
+    @Headers('token') token,
+    @Headers('auth_provider') provider,
+  ) {
+    return this.problemsService.create(createProblemDto, token, provider);
   }
 
   @Get()
@@ -31,12 +36,26 @@ export class ProblemsController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProblemDto: UpdateProblemDto) {
-    return this.problemsService.update(id, updateProblemDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateProblemDto: UpdateProblemDto,
+    @Headers('token') token,
+    @Headers('auth_provider') provider,
+  ) {
+    return await this.problemsService.update(
+      id,
+      updateProblemDto,
+      token,
+      provider,
+    );
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.problemsService.remove(id);
+  async remove(
+    @Param('id') id: string,
+    @Headers('token') token,
+    @Headers('auth_provider') provider,
+  ) {
+    return await this.problemsService.remove(id, token, provider);
   }
 }
