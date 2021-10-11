@@ -39,7 +39,10 @@ export class AuthService {
       };
     }
 
-    return { status: true };
+    return {
+      status: true,
+      user,
+    };
   }
 
   private getAuthProvider(providerName: string): IAuthProvider | undefined {
