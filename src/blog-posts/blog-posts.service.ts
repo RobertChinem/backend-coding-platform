@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { UsersService } from 'src/users/users.service';
 import { CreateBlogPostDto } from './dto/create-blog-post.dto';
 import { UpdateBlogPostDto } from './dto/update-blog-post.dto';
 import { BlogPost, BlogPostDocument } from './entities/blog-post.entity';
@@ -9,9 +10,22 @@ import { BlogPost, BlogPostDocument } from './entities/blog-post.entity';
 export class BlogPostsService {
   constructor(
     @InjectModel(BlogPost.name) private blogPostModel: Model<BlogPostDocument>,
+    private readonly usersService: UsersService,
   ) {}
 
-  create(createBlogPostDto: CreateBlogPostDto) {
+  async create(
+    createBlogPostDto: CreateBlogPostDto,
+    token: string,
+    provider: string,
+  ) {
+    const user = await this.usersService.findUserByToken({ token, provider });
+    if (!user) {
+      return {
+        status: false,
+        message: 'Invalid credentials',
+      };
+    }
+
     const blogPost = new this.blogPostModel(createBlogPostDto);
     return blogPost.save();
   }
@@ -24,7 +38,20 @@ export class BlogPostsService {
     return this.blogPostModel.findById(id);
   }
 
-  update(id: string, updateBlogPostDto: UpdateBlogPostDto) {
+  async update(
+    id: string,
+    updateBlogPostDto: UpdateBlogPostDto,
+    token: string,
+    provider: string,
+  ) {
+    const user = await this.usersService.findUserByToken({ token, provider });
+    if (!user) {
+      return {
+        status: false,
+        message: 'Invalid credentials',
+      };
+    }
+
     return this.blogPostModel.findByIdAndUpdate(
       {
         _id: id,
@@ -38,7 +65,14 @@ export class BlogPostsService {
     );
   }
 
-  remove(id: string) {
+  async remove(id: string, token: string, provider: string) {
+    const user = await this.usersService.findUserByToken({ token, provider });
+    if (!user) {
+      return {
+        status: false,
+        message: 'Invalid credentials',
+      };
+    }
     return this.blogPostModel
       .deleteOne({
         _id: id,

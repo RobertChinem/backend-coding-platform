@@ -7,12 +7,10 @@ import {
   Param,
   Delete,
   Headers,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { BlogPostsService } from './blog-posts.service';
 import { CreateBlogPostDto } from './dto/create-blog-post.dto';
 import { UpdateBlogPostDto } from './dto/update-blog-post.dto';
-import { OAuth2Client } from 'google-auth-library';
 require('dotenv/config');
 
 interface IUser {
@@ -25,32 +23,17 @@ interface IUser {
 export class BlogPostsController {
   constructor(private readonly blogPostsService: BlogPostsService) {}
 
-  async verify(idToken: string): Promise<IUser> {
-    const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
-    const client = new OAuth2Client(CLIENT_ID);
-    const ticket = await client.verifyIdToken({
-      idToken: idToken,
-      audience: CLIENT_ID,
-    });
-    const { name, email, picture } = ticket.getPayload();
-    return {
-      name: name || '',
-      email: email || '',
-      avatar: picture || '',
-    };
-  }
-
   @Post()
   async create(
     @Body() createBlogPostDto: CreateBlogPostDto,
-    @Headers() headers,
+    @Headers('token') token,
+    @Headers('auth_provider') provider,
   ) {
-    try {
-      await this.verify(headers.token || '');
-      return this.blogPostsService.create(createBlogPostDto);
-    } catch {
-      throw new UnauthorizedException();
-    }
+    return await this.blogPostsService.create(
+      createBlogPostDto,
+      token,
+      provider,
+    );
   }
 
   @Get()
@@ -64,15 +47,26 @@ export class BlogPostsController {
   }
 
   @Patch(':id')
-  update(
+  async update(
     @Param('id') id: string,
     @Body() updateBlogPostDto: UpdateBlogPostDto,
+    @Headers('token') token,
+    @Headers('auth_provider') provider,
   ) {
-    return this.blogPostsService.update(id, updateBlogPostDto);
+    return await this.blogPostsService.update(
+      id,
+      updateBlogPostDto,
+      token,
+      provider,
+    );
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.blogPostsService.remove(id);
+  async remove(
+    @Param('id') id: string,
+    @Headers('token') token,
+    @Headers('auth_provider') provider,
+  ) {
+    return await this.blogPostsService.remove(id, token, provider);
   }
 }

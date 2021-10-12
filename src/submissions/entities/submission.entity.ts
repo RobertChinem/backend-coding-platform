@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
-export type SolutionDocument = Solution & Document;
+export type SubmissionDocument = Submission & Document;
 
 class TestCase {
   input: string;
@@ -18,7 +18,7 @@ class JudgeResult {
 }
 
 @Schema()
-export class Solution {
+export class Submission {
   @Prop()
   sourceCode: string;
 
@@ -30,8 +30,11 @@ export class Solution {
 
   @Prop()
   judgeResult: JudgeResult;
+
+  @Prop()
+  userID: string;
 }
 
-const SolutionSchema = SchemaFactory.createForClass(Solution);
+const SubmissionSchema = SchemaFactory.createForClass(Submission);
 
-export { SolutionSchema };
+export { SubmissionSchema };

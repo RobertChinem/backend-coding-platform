@@ -65,7 +65,10 @@ export class UsersService {
       .exec();
   }
 
-  async findUserByToken(authData: { token: string; provider: string }) {
+  async findUserByToken(authData: {
+    token: string;
+    provider: string;
+  }): Promise<UserDocument | null> {
     const provider = this.getAuthProvider(authData.provider);
     if (!provider) return null;
     const { email, valid } = await provider.validateToken(authData.token);
@@ -73,7 +76,7 @@ export class UsersService {
     return await this.findByEmail(email);
   }
 
-  async findByEmail(email: string) {
+  async findByEmail(email: string): Promise<UserDocument | null> {
     return await this.userModel.findOne({ email }).exec();
   }
 
