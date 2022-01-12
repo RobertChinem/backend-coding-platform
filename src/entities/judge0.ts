@@ -13,7 +13,7 @@ interface ITestCase {
 
 export interface IJudgeResult {
   input: string;
-  veredict: string;
+  verdict: string;
   expectedOutput: string;
   compile_output: string | null;
   stdout: string | null;
@@ -43,12 +43,21 @@ export class Judge0 {
     const results: IJudgeResult[] = await Promise.all(
       testCases.map(({ input, expectedOutput }) =>
         axios
-          .post(this.URL, {
-            source_code: this.encode(sourceCode),
-            stdin: this.encode(input),
-            language_id: languageID,
-            expected_output: this.encode(expectedOutput),
-          })
+          .post(
+            this.URL,
+            {
+              source_code: this.encode(sourceCode),
+              stdin: this.encode(input),
+              language_id: languageID,
+              expected_output: this.encode(expectedOutput),
+            },
+            {
+              headers: {
+                'x-rapidapi-host': `${process.env.X_RAPIDAPI_HOST}`,
+                'x-rapidapi-key': `${process.env.X_RAPIDAPI_KEY}`,
+              },
+            },
+          )
           .then(({ data }) => {
             let stdout = data.stdout;
             let stderr = data.stderr;
@@ -70,7 +79,7 @@ export class Judge0 {
             return {
               input,
               expectedOutput,
-              veredict: description,
+              verdict: description,
               compile_output,
               stdout,
               stderr,
@@ -80,7 +89,7 @@ export class Judge0 {
     );
 
     return {
-      veredict: this.getVeredict(results.map((result) => result)),
+      verdict: this.getVerdict(results.map((result) => result)),
       testCases: results,
     };
   }
@@ -95,21 +104,21 @@ export class Judge0 {
 
   private checkWrongAnswer(results: IJudgeResult[]): ICheckerResult {
     return {
-      result: results.some((result) => result.veredict === 'Wrong Answer'),
+      result: results.some((result) => result.verdict === 'Wrong Answer'),
       description: 'Wrong Answer',
     };
   }
 
   private checkCompilationError(results: IJudgeResult[]): ICheckerResult {
     return {
-      result: results.some((result) => result.veredict === 'Compilation Error'),
+      result: results.some((result) => result.verdict === 'Compilation Error'),
       description: 'Compilation Error',
     };
   }
 
   private checkAccepted(results: IJudgeResult[]): ICheckerResult {
     return {
-      result: results.every((result) => result.veredict === 'Accepted'),
+      result: results.every((result) => result.verdict === 'Accepted'),
       description: 'Accepted',
     };
   }
@@ -117,7 +126,7 @@ export class Judge0 {
   private checkTimeLimitExceeded(results: IJudgeResult[]): ICheckerResult {
     return {
       result: results.some(
-        (result) => result.veredict === 'Time Limit Exceeded',
+        (result) => result.verdict === 'Time Limit Exceeded',
       ),
       description: 'Time Limit Exceeded',
     };
@@ -126,14 +135,14 @@ export class Judge0 {
   private checkRuntimeError(results: IJudgeResult[]): ICheckerResult {
     return {
       result: results.some((result) =>
-        result.veredict.includes('Runtime Error'),
+        result.verdict.includes('Runtime Error'),
       ),
       description: 'Runtime Error',
     };
   }
 
-  private getVeredict(results: IJudgeResult[]) {
-    let veredict = '';
+  private getVerdict(results: IJudgeResult[]) {
+    let verdict = '';
 
     const checkers = [
       this.checkCompilationError,
@@ -146,11 +155,11 @@ export class Judge0 {
     for (const checker of checkers) {
       const { result, description } = checker(results);
       if (result) {
-        veredict = description;
+        verdict = description;
         break;
       }
     }
 
-    return veredict;
+    return verdict;
   }
 }
