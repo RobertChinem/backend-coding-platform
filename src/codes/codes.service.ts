@@ -2,16 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { CreateCodeDto } from './dto/create-code.dto';
 import { UpdateCodeDto } from './dto/update-code.dto';
 import axios from 'axios';
+import { Judge0 } from '../entities/judge0';
 require('dotenv/config');
 
 @Injectable()
 export class CodesService {
   async create(createCodeDto: CreateCodeDto) {
-    const response = await axios.post(
-      `${process.env.HOST_JUDGE0}/submissions/?base64_encoded=true&wait=true`,
-      createCodeDto,
-    );
-    return response.data;
+    const judge0 = new Judge0();
+    return await judge0.runCode({
+      sourceCode: createCodeDto.source_code,
+      languageID: createCodeDto.language_id,
+      stdin: createCodeDto.stdin,
+    });
   }
 
   findAll() {

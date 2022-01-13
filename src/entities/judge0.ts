@@ -29,14 +29,21 @@ export class Judge0 {
   private URL = `${process.env.HOST_JUDGE0}/submissions/?base64_encoded=true&wait=true`;
 
   async runCode({ sourceCode, languageID, stdin }: ISubmission) {
-    const result = await axios
-      .post(this.URL, {
+    const response = await axios.post(
+      this.URL,
+      {
         source_code: this.encode(sourceCode),
-        stdin: this.encode(stdin || ''),
+        stdin: this.encode(stdin),
         language_id: languageID,
-      })
-      .then(({ data }) => data);
-    return result;
+      },
+      {
+        headers: {
+          'x-rapidapi-host': `${process.env.X_RAPIDAPI_HOST}`,
+          'x-rapidapi-key': `${process.env.X_RAPIDAPI_KEY}`,
+        },
+      },
+    );
+    return response.data;
   }
 
   async judge({ sourceCode, languageID }: ISubmission, testCases: ITestCase[]) {
