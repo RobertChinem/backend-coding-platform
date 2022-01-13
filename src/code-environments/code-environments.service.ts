@@ -37,7 +37,7 @@ export class CodeEnvironmentsService {
 
   async create() {
     const codeEnvironment = new this.codeEnvironmentModel({
-      name: 'default name',
+      name: 'New Project',
       states: [],
       comments: [],
     });
@@ -49,12 +49,18 @@ export class CodeEnvironmentsService {
     return codeEnvironment;
   }
 
-  findAll() {
-    return `This action returns all codeEnvironments`;
+  async update(id: string, updateCodeEnvironmentDto: UpdateCodeEnvironmentDto) {
+    const codeEnvironment = await this.codeEnvironmentModel.findById(id);
+    const { name } = updateCodeEnvironmentDto;
+
+    if (name) {
+      codeEnvironment.name = name;
+    }
+    return await codeEnvironment.save();
   }
 
-  update(id: number, updateCodeEnvironmentDto: UpdateCodeEnvironmentDto) {
-    return `This action updates a #${id} codeEnvironment`;
+  findAll() {
+    return `This action returns all codeEnvironments`;
   }
 
   remove(id: number) {

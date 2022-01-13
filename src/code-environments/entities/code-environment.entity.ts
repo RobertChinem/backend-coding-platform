@@ -20,6 +20,8 @@ class CodeEnvironmentState {
   timestamp: number;
   code: Code;
   parent_commit: string;
+  message: string;
+  username: string;
 }
 
 @Schema()

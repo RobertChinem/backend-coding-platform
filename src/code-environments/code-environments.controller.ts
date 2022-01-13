@@ -55,7 +55,7 @@ export class CodeEnvironmentsController {
     @Param('id') id: string,
     @Body() updateCodeEnvironmentDto: UpdateCodeEnvironmentDto,
   ) {
-    return this.codeEnvironmentsService.update(+id, updateCodeEnvironmentDto);
+    return this.codeEnvironmentsService.update(id, updateCodeEnvironmentDto);
   }
 
   @Delete(':id')

@@ -5,4 +5,6 @@ export class CreateCommitDto {
     stdin: string;
   };
   parent_commit: string;
+  message: string;
+  username: string;
 }
