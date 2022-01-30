@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { SubmissionsModule } from './submissions/submissions.module';
 import { CodeEnvironmentsModule } from './code-environments/code-environments.module';
+import { CoursesModule } from './courses/courses.module';
 require('dotenv/config');
 
 @Module({
@@ -22,6 +23,7 @@ require('dotenv/config');
     AuthModule,
     SubmissionsModule,
     CodeEnvironmentsModule,
+    CoursesModule,
   ],
   controllers: [],
   providers: [ChatGateway],
