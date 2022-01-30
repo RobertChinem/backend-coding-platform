@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateCodeDto } from './dto/create-code.dto';
 import { UpdateCodeDto } from './dto/update-code.dto';
-import axios from 'axios';
 import { Judge0 } from '../entities/judge0';
 require('dotenv/config');
 
